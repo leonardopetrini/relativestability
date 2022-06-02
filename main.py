@@ -15,6 +15,7 @@ from torchvision.models.feature_extraction import get_graph_node_names
 from torchvision.models.feature_extraction import create_feature_extractor
 
 prefix = '/home/lpetrini/results/'
+# prefix = '/scratch/izar/lpetrini/results/'
 
 def execute(args):
 
@@ -54,7 +55,7 @@ def execute(args):
                 od = l(xd)
                 on = l(xn)
 
-            for k in o:
+            for i, k in enumerate(o):
                 D = stability(o[k], od[k])
                 G = stability(o[k], on[k])
 
@@ -64,6 +65,7 @@ def execute(args):
                     'dataset': args.dataset,
                     'net': args.net,
                     'layer': k,
+                    'li': i,
                     'trained': tr,
                     'acc': r['best']['acc'],
                     'epoch': r['best']['epoch'],

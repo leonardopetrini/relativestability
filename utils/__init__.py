@@ -12,6 +12,7 @@ def load_net_from_run(r, trained, device='cpu', shuffle_channels=False):
         for k in state:
             if len(state[k].shape) == 4:
                 state[k] = state[k][torch.randperm(state[k].shape[0])]
+                state[k] = state[k][:, torch.randperm(state[k].shape[1])]
     if 'VGG' in args.net and 'bn' not in args.net:
         for k in state:
             if 'running' in k:
@@ -100,3 +101,31 @@ def select_net(args):
     else:
         raise ValueError
     return net
+
+def vgg_layer_names(net, li):
+    cfg = {
+    'VGG11': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
+    'VGG13': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
+    'VGG16': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'],
+    'VGG19': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'],}
+    i = 0
+    layer_names = {}
+    for k in cfg:
+        for bn in ['', 'bn']:
+            kbn = k + bn
+            layer_names[kbn] = []
+            for l in cfg[k]:
+                if l == 'M':
+                    layer_names[kbn].append('M')
+                    i += 1
+                else:
+                    layer_names[kbn].append('Conv')
+                    if bn == 'bn':
+                        layer_names[kbn].append('BN')
+                    layer_names[kbn].append('Relu')
+                    i += 3 if bn == 'bn' else 2
+            layer_names[kbn].append('A')
+            layer_names[kbn].append('fl')
+            layer_names[kbn].append('classifier')
+
+    return layer_names[net][li]
