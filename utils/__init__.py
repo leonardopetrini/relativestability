@@ -8,11 +8,15 @@ def load_net_from_run(r, trained, device='cpu', shuffle_channels=False):
     args.device = device
     state = OrderedDict([(k[7:], r['best']['net'][k]) for k in r['best']['net']])
     if shuffle_channels:
-    ## permute channels of filter weights!!!
+    ## permute conv. layers channels
         for k in state:
             if len(state[k].shape) == 4:
-                state[k] = state[k][torch.randperm(state[k].shape[0])]
                 state[k] = state[k][:, torch.randperm(state[k].shape[1])]
+                if shuffle_channels == 2:
+                    perm = torch.randperm(state[k].shape[0])
+                    state[k] = state[k][perm]
+            # if 'running' in k and shuffle_channels == 2:
+            #     state[k] = state[k][perm]
     if 'VGG' in args.net and 'bn' not in args.net:
         for k in state:
             if 'running' in k:
@@ -98,6 +102,10 @@ def select_net(args):
             net = DenseNetL6(num_ch=num_ch * imsize ** 2, num_classes=num_classes, h=args.width)
         if args.net == 'FC':
             net = FC()
+        if args.net == 'ConvGAP':
+            net = ConvNetGAPMF(n_blocks=args.depth, input_ch=num_ch, h=args.width, filter_size=args.filter_size,
+                               stride=1, out_dim=num_classes)
+
     else:
         raise ValueError
     return net

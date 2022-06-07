@@ -7,8 +7,12 @@ def stability(o, op):
     :param op: output on perturbed batch
     :return: stability
     """
-    deno = torch.cdist(o, o).pow(2).mean().item() + 1e-16
-    return (op - o).pow(2).mean(0).sum().item() / deno
+
+    o = o.reshape(len(o), -1)
+    op = op.reshape(len(o), -1)
+
+    deno = torch.cdist(o, o).pow(2).mean().item() + 1e-10
+    return (op - o).pow(2).mean(0).sum().item(), deno
 
 # def stability(f, x, xp):
 #     """

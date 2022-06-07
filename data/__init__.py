@@ -25,7 +25,7 @@ def load_cifar(p=500, resize=None, train=False, device='cpu', classes=None, shuf
     if classes is not None:
         testset = torch.utils.data.Subset(testset, [i for i, t in enumerate(testset.targets) if t in classes])
     testloader = torch.utils.data.DataLoader(
-        testset, batch_size=p, shuffle=shuffle, num_workers=2)
+        testset, batch_size=p, shuffle=shuffle, num_workers=1)
 
     if not return_dataloader:
         imgs, y = next(iter(testloader))
@@ -47,7 +47,7 @@ def load_svhn(p=500, resize=None, train=False):
     testset = torchvision.datasets.SVHN(
         root='/home/lpetrini/data/cifar10', split='train' if train else 'test', download=True, transform=transform_test)
     testloader = torch.utils.data.DataLoader(
-        testset, batch_size=p, shuffle=False, num_workers=2)
+        testset, batch_size=p, shuffle=False, num_workers=1)
 
     imgs, y = next(iter(testloader))
     return imgs, y
@@ -64,18 +64,18 @@ def load_mnist(p=500, fashion=False, device='cpu'):
             root='/home/lpetrini/data/fashionmnist', train=False, download=True, transform=transform)
 
     testloader = torch.utils.data.DataLoader(
-        testset, batch_size=p, shuffle=False, num_workers=2)
+        testset, batch_size=p, shuffle=False, num_workers=1)
 
     imgs, y = next(iter(testloader))
     return imgs.to(device), y.to(device)
 
 
 def load_twopoints(p=500, train=False, device='cpu', shuffle=None, xi=14, gap=2, imsize=28,
-                   norm='L2', pbc=False, local_translations=False, seed=0, return_dataloader=False):
+                   norm='L2', pbc=False, local_translations=0, seed=0, return_dataloader=False, bkg_noise=0):
     torch.manual_seed(seed)
     if shuffle is None:
         shuffle = not train
-    testset = TwoPointsDataset(xi=xi, d=imsize, train=train, gap=gap, norm=norm, pbc=pbc)
+    testset = TwoPointsDataset(xi=xi, d=imsize, train=train, gap=gap, norm=norm, pbc=pbc, background_noise=bkg_noise)
     #     if local_translations:
     #         lt = torch.randint(2 * local_translations + 1, testset.coordinates.shape) - 1
     t = torch.randn(testset.coordinates.shape)
@@ -83,7 +83,7 @@ def load_twopoints(p=500, train=False, device='cpu', shuffle=None, xi=14, gap=2,
     testset.coordinates += t.int()
     testset.coordinates = testset.coordinates.clip(0, imsize - 1)
     testloader = torch.utils.data.DataLoader(
-        testset, batch_size=p, shuffle=shuffle, num_workers=2)
+        testset, batch_size=p, shuffle=shuffle, num_workers=1)
     if not return_dataloader:
         imgs, y = next(iter(testloader))
         return imgs.to(device), y.to(device)

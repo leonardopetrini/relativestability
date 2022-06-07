@@ -1,5 +1,4 @@
 import sys
-
 try:
     sys.path.insert(0, '/home/lpetrini/git/diffeomorphism/')
 except ModuleNotFoundError:
