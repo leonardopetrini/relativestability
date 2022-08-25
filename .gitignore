@@ -1,5 +1,6 @@
 dataframes/
 *.ipynb
+!cnn_constant_filters.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

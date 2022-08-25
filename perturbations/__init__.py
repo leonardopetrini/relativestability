@@ -14,8 +14,9 @@ from functorch import vmap
 def diffeo_batch(imgs, delta=1, c=3, interp='linear'):
     n = imgs.shape[-1]
     T = typical_temperature(delta, c, n)
-    batched_deform = vmap(partial(deform, T=T, cut=c, interp=interp), randomness='different')
-    return batched_deform(imgs)
+    return torch.stack([deform(i, T=T, cut=c, interp=interp) for i in imgs])
+    # batched_deform = vmap(partial(deform, T=T, cut=c, interp=interp), randomness='different')
+    # return batched_deform(imgs)
 
 def noisy_batch(imgs, timgs):
     """

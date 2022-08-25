@@ -5,10 +5,11 @@ import torch
 import torchvision
 from torchvision import transforms
 
-from datasets import TwoPointsDataset
+from datasets.twopoints import *
+from .my_transforms import *
 
-
-def load_cifar(p=500, resize=None, train=False, device='cpu', classes=None, shuffle=None, return_dataloader=False):
+def load_cifar(p=500, resize=None, train=False, device='cpu', classes=None, shuffle=None,
+               return_dataloader=False, gaussian_corruption_std=0):
     if shuffle is None:
         shuffle = not train
     test_list = [
@@ -17,6 +18,8 @@ def load_cifar(p=500, resize=None, train=False, device='cpu', classes=None, shuf
     ]
     if resize is not None:
         test_list.append(transforms.Resize((resize, resize), interpolation=3))
+    if gaussian_corruption_std:
+        test_list.append(GaussianNoiseCorruption(std=gaussian_corruption_std))
 
     transform_test = transforms.Compose(test_list)
 
@@ -71,11 +74,12 @@ def load_mnist(p=500, fashion=False, device='cpu'):
 
 
 def load_twopoints(p=500, train=False, device='cpu', shuffle=None, xi=14, gap=2, imsize=28,
-                   norm='L2', pbc=False, local_translations=0, seed=0, return_dataloader=False, bkg_noise=0):
+                   norm='L2', pbc=False, local_translations=0, seed=0, return_dataloader=False,
+                   bkg_noise=0, labelling='distance'):
     torch.manual_seed(seed)
     if shuffle is None:
         shuffle = not train
-    testset = TwoPointsDataset(xi=xi, d=imsize, train=train, gap=gap, norm=norm, pbc=pbc, background_noise=bkg_noise)
+    testset = TwoPointsDataset(xi=xi, d=imsize, train=train, gap=gap, norm=norm, pbc=pbc, background_noise=bkg_noise, labelling=labelling)
     #     if local_translations:
     #         lt = torch.randint(2 * local_translations + 1, testset.coordinates.shape) - 1
     t = torch.randn(testset.coordinates.shape)

@@ -3,10 +3,14 @@ sys.path.insert(0, '/home/lpetrini/git/diffeo-sota/')
 from collections import OrderedDict
 from models import *
 
-def load_net_from_run(r, trained, device='cpu', shuffle_channels=False):
+def load_net_from_run(r, trained, device='cpu', shuffle_channels=False, mean_field_weights=0, best=1):
     args = r['args']
     args.device = device
-    state = OrderedDict([(k[7:], r['best']['net'][k]) for k in r['best']['net']])
+    if best:
+        lnet = r['best']['net']
+    else:
+        lnet = r['last']
+    state = OrderedDict([(k[7:], lnet[k]) for k in lnet if k != 'last_bias'])
     if shuffle_channels:
     ## permute conv. layers channels
         for k in state:
@@ -31,6 +35,11 @@ def load_net_from_run(r, trained, device='cpu', shuffle_channels=False):
                 c.track_running_stats = False
                 c.running_mean = None
                 c.running_var = None
+
+    if mean_field_weights == 1:
+        net = mean_field_params(net)
+    if mean_field_weights == 2:
+        net = gaussian_params(net)
     net.eval()
     net = net.to(device)
     return net
@@ -40,7 +49,15 @@ def select_net(args):
     nc = 200 if 'tiny' in args.dataset else 10
     nc = 2 if 'diffeo' in args.dataset else nc
     num_classes = 1 if args.loss == 'hinge' else nc
-    imsize = 28 if 'mnist' in args.dataset or 'twopoints' in args.dataset else 32
+    if 'mnist' in args.dataset:
+        imsize = 28
+    elif 'twopoints' in args.dataset:
+        try:
+            imsize = args.d
+        except AttributeError:
+            imsize = 28
+    else:
+        imsize = 32
     try:
         args.fcwidth
     except:
@@ -54,6 +71,10 @@ def select_net(args):
     except:
         args.width = args.fcwidth
     try:
+        args.batch_norm
+    except:
+        args.batch_norm = 0
+    try:
         args.width_factor
     except:
         args.width_factor = 1
@@ -61,6 +82,10 @@ def select_net(args):
         args.pretrained
     except:
         args.pretrained = 0
+    try:
+        args.last_bias
+    except:
+        args.last_bias = 0
     if not args.pretrained: # and not args.scattering_mode
         if 'VGG' in args.net:
             if 'bn' in args.net:
@@ -104,7 +129,8 @@ def select_net(args):
             net = FC()
         if args.net == 'ConvGAP':
             net = ConvNetGAPMF(n_blocks=args.depth, input_ch=num_ch, h=args.width, filter_size=args.filter_size,
-                               stride=1, out_dim=num_classes)
+                               stride=args.stride, pbc=args.pbc, out_dim=num_classes, batch_norm=args.batch_norm,
+                               last_bias=args.last_bias)
 
     else:
         raise ValueError
@@ -137,3 +163,35 @@ def vgg_layer_names(net, li):
             layer_names[kbn].append('classifier')
 
     return layer_names[net][li]
+
+def mean_field_params(f):
+    for p in f.parameters():
+        if len(p.shape) == 4:
+            if p.shape[1] == 3:
+                p.data = p.sum(dim=0, keepdim=True)
+            else:
+                p.data = p.sum(dim=[0, 1], keepdim=True)
+        elif len(p.shape) == 1:
+            p.data = p.sum(dim=0, keepdim=True)
+        elif len(p.shape) == 2:
+            p.data = p.sum(dim=[0, 1], keepdim=True)
+    for c in f.modules():
+        if 'batchnorm' in str(type(c)):
+            c.running_mean = c.running_mean.mean(dim=0, keepdim=True)
+            c.running_var = c.running_var.mean(dim=0, keepdim=True)
+    return f
+
+def gaussian_params(f):
+    for p in f.parameters():
+        pn = torch.randn(p.shape)
+        if len(p.shape) == 4:
+            mean = p.mean(dim=[0, 1], keepdim=True)
+            std = p.std(dim=[0, 1], keepdim=True)
+        elif len(p.shape) == 1:
+            mean = p.mean(dim=0, keepdim=True)
+            std = p.std(dim=0, keepdim=True)
+        elif len(p.shape) == 2:
+            mean = p.mean(dim=[0, 1], keepdim=True)
+            std = p.std(dim=[0, 1], keepdim=True)
+        p.data = pn * std + mean
+    return f
