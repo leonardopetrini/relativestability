@@ -1,4 +1,5 @@
 dataframes/
+figures/
 *.ipynb
 !cnn_constant_filters.ipynb
 

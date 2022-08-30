@@ -8,8 +8,8 @@ except ModuleNotFoundError:
 import math
 import torch
 from diff import deform
-from functools import partial
-from functorch import vmap
+# from functools import partial
+# from functorch import vmap
 
 def diffeo_batch(imgs, delta=1, c=3, interp='linear'):
     n = imgs.shape[-1]

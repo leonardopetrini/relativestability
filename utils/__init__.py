@@ -2,6 +2,22 @@ import sys
 sys.path.insert(0, '/home/lpetrini/git/diffeo-sota/')
 from collections import OrderedDict
 from models import *
+import numpy as np
+import matplotlib.pyplot as plt
+
+def std(x, vec=True):
+    if vec:
+        x = np.vstack(x)
+        return np.std(x, axis=0)
+    else:
+        return np.std(x)
+
+def plot_std(y, std, x=None, c='C0', alpha=.3):
+    log10e = math.log10(math.exp(1))
+    if x is None:
+        x = y.keys()
+    rerr = log10e * std / y
+    plt.fill_between(x, 10 ** (np.log10(y) - rerr), 10 ** (np.log10(y) + rerr), color=c, alpha=alpha)
 
 def load_net_from_run(r, trained, device='cpu', shuffle_channels=False, mean_field_weights=0, best=1):
     args = r['args']
@@ -9,8 +25,11 @@ def load_net_from_run(r, trained, device='cpu', shuffle_channels=False, mean_fie
     if best:
         lnet = r['best']['net']
     else:
-        lnet = r['last']
-    state = OrderedDict([(k[7:], lnet[k]) for k in lnet if k != 'last_bias'])
+        if r['dynamics'] is not None:
+            lnet = r['dynamics'][-1]['net']
+        else:
+            lnet = r['last']
+    state = OrderedDict([(k[7:], lnet[k]) for k in lnet if 'last_bias' not in k])
     if shuffle_channels:
     ## permute conv. layers channels
         for k in state:
