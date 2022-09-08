@@ -1,4 +1,5 @@
 def filtering_args(a, args):
+    # return (a['optim'] == 'adam' or a['stride'] == 2) and a['net'] == 'VGG11bn' and a['ptr'] == 2**13 and a['width_factor'] == 1
     return 1
     # return a['stride'] == 1 and a['width'] <= 64 and 'batch_norm' in a and a['epochs'] == 200
     # return a['batch_size'] == 128
@@ -33,5 +34,6 @@ def filtering_args(a, args):
 #     #     return 0
 
 def filtering_data(data):
+    # return 'terr' in data and data['train loss'][-1] < 0.1
     return 1
     # return data['train loss'][-1] < 0.1

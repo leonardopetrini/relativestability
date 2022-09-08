@@ -58,7 +58,7 @@ def execute(args):
                                labelling=args['labelling'])
     else:
         xd = diffeo_batch(x, args['delta'], args['cut'])
-    xn = noisy_batch(x, xd)
+    xn = noisy_batch(x, xd, args['noise_magnitude'])
 
     df = pd.DataFrame()
 
@@ -89,8 +89,8 @@ def execute(args):
 
 
             for i, k in enumerate(o):
-                D, deno = stability(o[k], od[k])
-                G, _ = stability(o[k], on[k])
+                D, deno = stability(o[k], od[k], mean=args['mean_stability'])
+                G, _ = stability(o[k], on[k], mean=args['mean_stability'])
 
                 if args['corrupt_test']:
                     print('Re-computing test error...')
@@ -149,10 +149,13 @@ def main():
     parser.add_argument("--best_net", type=int, default=1, help='network architecture')
     parser.add_argument("--shuffle_channels", type=int, default=0, help='shuffle convolutional channels')
     parser.add_argument("--mf_weights", type=int, default=0, help='average the weights')
+    parser.add_argument("--mean_stability", type=int, default=1, help='mean of median in stab. computation')
 
     # Transformations
     parser.add_argument("--delta", type=float, default=1, help='diffeo avg. pixel displacement')
     parser.add_argument("--cut", type=float, default=3, help='diffeo high freq. cut-off')
+
+    parser.add_argument("--noise_magnitude", type=float, default=-1, help='noise magnitude. If -1 matches diffeo effective noise.')
 
     args = parser.parse_args().__dict__
 

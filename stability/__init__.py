@@ -1,6 +1,6 @@
 import torch
 
-def stability(o, op):
+def stability(o, op, mean=1):
     """
     compute stability of the function `f` to perturbations `xp` of `x`
     :param o: output on original batch
@@ -12,7 +12,12 @@ def stability(o, op):
     op = op.reshape(len(o), -1)
 
     deno = torch.cdist(o, o).pow(2).mean().item() + 1e-10
-    return (op - o).pow(2).mean(0).sum().item(), deno
+    if mean:
+        nume = (op - o).pow(2).mean(0).sum().item()
+    else:
+        nume = (op - o).pow(2).median(0).values.sum().item()
+
+    return nume, deno
 
 # def stability(f, x, xp):
 #     """

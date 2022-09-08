@@ -105,6 +105,14 @@ def select_net(args):
         args.last_bias
     except:
         args.last_bias = 0
+    try:
+        args.pooling
+    except:
+        args.pooling = 'max'
+    try:
+        args.stride
+    except:
+        args.stride = 2
     if not args.pretrained: # and not args.scattering_mode
         if 'VGG' in args.net:
             if 'bn' in args.net:
@@ -113,7 +121,16 @@ def select_net(args):
             else:
                 bn = False
                 net_name = args.net
-            net = VGG(net_name, num_ch=num_ch, num_classes=num_classes, batch_norm=bn, param_list=args.param_list, width_factor=args.width_factor)
+            net = VGG(
+                net_name,
+                num_ch=num_ch,
+                num_classes=num_classes,
+                batch_norm=bn,
+                param_list=args.param_list,
+                pooling=args.pooling,
+                width_factor=args.width_factor,
+                # stride=args.stride
+            )
         if args.net == 'AlexNet':
             net = AlexNet(num_ch=num_ch, num_classes=num_classes)
         if args.net == 'ResNet18':
