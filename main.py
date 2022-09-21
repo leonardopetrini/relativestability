@@ -52,6 +52,8 @@ def execute(args):
     else:
         raise ValueError('Dataset not in the list!')
 
+    x *= args['input_variance']
+
     if 'twopoints' in args['dataset']:
         xd, _ = load_twopoints(p=args['P'], seed=0, xi=args['xi'], imsize=args['d'], pbc=args['pbc'], gap=args['gap'], norm=args['norm'],
                                train=False, shuffle=True, device=args['device'], local_translations=1, bkg_noise=args['background_noise'],
@@ -134,6 +136,7 @@ def main():
     parser.add_argument("--dataset", type=str, required=True, help='dataset')
     parser.add_argument("--gaussian_corruption_std", type=float, default=0, help='images with background noise')
     parser.add_argument("--corrupt_test", type=float, default=0, help='corrupt also test images with background noise')
+    parser.add_argument("--input_variance", type=float, default=1, help='variance of the datapoints')
 
     # TwoPoints
     parser.add_argument("--labelling", type=str, default='distance', help='labelling function')

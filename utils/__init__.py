@@ -63,6 +63,27 @@ def load_net_from_run(r, trained, device='cpu', shuffle_channels=False, mean_fie
     net = net.to(device)
     return net
 
+def load_net_from_state(state, args, trained, device='cpu'):
+    args.device = device
+    state = OrderedDict([(k[7:], state[k]) for k in state])
+    if 'VGG' in args.net and 'bn' not in args.net:
+        for k in state:
+            if 'running' in k:
+                args.net += 'bn'
+                break
+    net = select_net(args)
+    if trained:
+        net.load_state_dict(state)
+    else:
+        for c in net.modules():
+            if 'batchnorm' in str(type(c)):
+                c.track_running_stats = False
+                c.running_mean = None
+                c.running_var = None
+    net.eval()
+    net = net.to(device)
+    return net
+
 def select_net(args):
     num_ch = 1 if 'mnist' in args.dataset or 'twopoints' in args.dataset else 3
     nc = 200 if 'tiny' in args.dataset else 10
