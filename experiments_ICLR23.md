@@ -27,7 +27,7 @@ grun python main.py --init 0 --init_samples 5 --dataset cifar10 --filename noise
 " --net:str 'DenseNetL4' 'DenseNetL2' 'DenseNetL6' 'VGG11' 'ResNet34' 'ResNet50' 'VGG11bn' 'VGG16bn' 'VGG19bn' 'AlexNet' 'LeNet' 'ResNet18' 'EfficientNetB0' --shuffle_channels 0 --corrupt_test 1 --gaussian_corruption_std 0. 1e-2 1e-1 1 10 30 1e2
 ```
 
-### Figure 3
+### Figure 2
 Uses the networks trained for Fig. 1, `by_layer = 1` computes stabilities layer by layer (`relativestability` repo):
 ```
 python -m grid /scratch/izar/lpetrini/results/corrupted_cifar_stab --n 6 "
@@ -44,7 +44,7 @@ grun python main.py --batch_size 128 --save_best_net 1 --diffeo 0 --random_crop 
 
 ```
 
-### Figure 2
+### Figure 3
 `relativestability` repo
 Uses the networks trained for Fig. 5. Projections of the network weights on the grid-Laplacian eigenvectors are computed using `laplacian_prog` from `laplacian`.
 
