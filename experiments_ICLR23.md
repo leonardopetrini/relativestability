@@ -2,8 +2,8 @@
 
 Experiments are run using [`grid`](https://github.com/mariogeiger/grid/tree/master/grid).
 
-The `diffeo-sota` repository implements the training of deep neural networks.
-The `relativestability` repository implements the diffeomorphisms (D_f), noise (G_f) and relative (R_f) stabilities computation. 
+The [`diffeo-sota`](https://anonymous.4open.science/r/diffeo-sota-C02B/README.md) repository implements the training of deep neural networks.
+The [`relativestability`](https://anonymous.4open.science/r/relativestability-D5DF/README.md) repository implements the diffeomorphisms (D_f), noise (G_f) and relative (R_f) stabilities computation. 
 
 ### Figure 1
 Networks trained on CIFAR10 at different added noise intensities:
