@@ -4,6 +4,7 @@ Experiments are run using [`grid`](https://github.com/mariogeiger/grid/tree/mast
 
 The [`diffeo-sota`](https://anonymous.4open.science/r/diffeo-sota-C02B/README.md) repository implements the training of deep neural networks.
 The [`relativestability`](https://anonymous.4open.science/r/relativestability-D5DF/README.md) repository implements the diffeomorphisms (D_f), noise (G_f) and relative (R_f) stabilities computation. 
+Experiments of Section 4 are run using [`scale_detection_1d`](https://anonymous.4open.science/r/scale_detection_1d-553D/README.md) 
 
 ### Figure 1
 Networks trained on CIFAR10 at different added noise intensities:
@@ -55,3 +56,6 @@ python -m grid /scratch/izar/lpetrini/results/scaledetection_stab --n 6 "
 grun python main.py --init 0 --dataset twopoints --by_layer 1 --P 500
 " --net:str 'VGG11' 'VGG11bn' 'VGG13bn' --shuffle_channels 0 1
 ```
+
+### Figure 9
+See `scale_detection_1d` repository for detail on how to reproduce the relative experiments.
