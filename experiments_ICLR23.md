@@ -4,7 +4,9 @@ Experiments are run using [`grid`](https://github.com/mariogeiger/grid/tree/mast
 
 The [`diffeo-sota`](https://anonymous.4open.science/r/diffeo-sota-C02B/README.md) repository implements the training of deep neural networks.
 The [`relativestability`](https://anonymous.4open.science/r/relativestability-D5DF/README.md) repository implements the diffeomorphisms (D_f), noise (G_f) and relative (R_f) stabilities computation. 
-Experiments of Section 4 are run using [`scale_detection_1d`](https://anonymous.4open.science/r/scale_detection_1d-553D/README.md) 
+Experiments of Section 4 are run using [`scale_detection_1d`](https://anonymous.4open.science/r/scale_detection_1d-553D/README.md). 
+
+An PyTorch implementation of the [`scale-detection task` in 2D can be found here](https://anonymous.4open.science/r/diffeo-sota-C02B/datasets/twopoints.py).
 
 ### Figure 1
 Networks trained on CIFAR10 at different added noise intensities:
@@ -28,7 +30,7 @@ grun python main.py --init 0 --init_samples 5 --dataset cifar10 --filename noise
 " --net:str 'DenseNetL4' 'DenseNetL2' 'DenseNetL6' 'VGG11' 'ResNet34' 'ResNet50' 'VGG11bn' 'VGG16bn' 'VGG19bn' 'AlexNet' 'LeNet' 'ResNet18' 'EfficientNetB0' --shuffle_channels 0 --corrupt_test 1 --gaussian_corruption_std 0. 1e-2 1e-1 1 10 30 1e2
 ```
 
-### Figure 2
+### Figure 3
 Uses the networks trained for Fig. 1, `by_layer = 1` computes stabilities layer by layer (`relativestability` repo):
 ```
 python -m grid /scratch/izar/lpetrini/results/corrupted_cifar_stab --n 6 "
@@ -36,8 +38,8 @@ grun python main.py --init 0 --dataset cifar10 --by_layer 1 --P 500
 " --net:str 'VGG11' 'VGG11bn' 'AlexNet' 'LeNet' --shuffle_channels 0 1 --corrupt_test 0 --gaussian_corruption_std 0.
 ```
 
-### Figure 5
-`diffeo-sota` repo:
+### Figure 6
+Training of deep networks on the scale-detection task, `diffeo-sota` repo:
 ```
 python -m grid /home/lpetrini/results/scaledetection --n 6 "
 grun python main.py --batch_size 128 --save_best_net 1 --diffeo 0 --random_crop 0 --hflip 0 --lr .05 --epochs 300 --norm L2
@@ -45,11 +47,12 @@ grun python main.py --batch_size 128 --save_best_net 1 --diffeo 0 --random_crop 
 
 ```
 
-### Figure 3
-`relativestability` repo
-Uses the networks trained for Fig. 5. Projections of the network weights on the grid-Laplacian eigenvectors are computed using `laplacian_prog` from `laplacian`.
+### Figure 4
+(`relativestability` repo)
 
-### Figure 6
+Uses the networks trained for Fig. 1 and 5. Projections of the network weights on the grid-Laplacian eigenvectors are computed using `laplacian_prog` from `laplacian`.
+
+### Figure 7
 Uses the networks trained for Fig. 5, `by_layer = 1` computes stabilities layer by layer (`relativestability` repo):
 ```
 python -m grid /scratch/izar/lpetrini/results/scaledetection_stab --n 6 "
@@ -58,4 +61,4 @@ grun python main.py --init 0 --dataset twopoints --by_layer 1 --P 500
 ```
 
 ### Figure 9
-See `scale_detection_1d` repository for detail on how to reproduce the relative experiments.
+See `scale_detection_1d` repository for details on how to reproduce the relative experiments.

@@ -20,7 +20,7 @@ from main import test
 from datasets import dataset_initialization
 
 prefix = '/home/lpetrini/results/'
-prefix = '/scratch/izar/lpetrini/results/'
+# prefix = '/scratch/izar/lpetrini/results/'
 
 torch.set_default_dtype(torch.float64)
 
@@ -54,12 +54,12 @@ def execute(args):
 
     x *= args['input_variance']
 
-    if 'twopoints' in args['dataset']:
+    if 'twopoints' in args['dataset'] and args['interp'] != 'nearest':
         xd, _ = load_twopoints(p=args['P'], seed=0, xi=args['xi'], imsize=args['d'], pbc=args['pbc'], gap=args['gap'], norm=args['norm'],
                                train=False, shuffle=True, device=args['device'], local_translations=1, bkg_noise=args['background_noise'],
                                labelling=args['labelling'])
     else:
-        xd = diffeo_batch(x, args['delta'], args['cut'])
+        xd = diffeo_batch(x, args['delta'], args['cut'], args['interp'])
     xn = noisy_batch(x, xd, args['noise_magnitude'])
 
     df = pd.DataFrame()
@@ -157,6 +157,7 @@ def main():
     # Transformations
     parser.add_argument("--delta", type=float, default=1, help='diffeo avg. pixel displacement')
     parser.add_argument("--cut", type=float, default=3, help='diffeo high freq. cut-off')
+    parser.add_argument("--interp", type=str, default='linear', help='interpolation')
 
     parser.add_argument("--noise_magnitude", type=float, default=-1, help='noise magnitude. If -1 matches diffeo effective noise.')
 
