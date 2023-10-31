@@ -13,4 +13,4 @@ Run `main.py`. Args:
 - `corrupt_test`, if `1`, corrupt test set also when computing accuracy
 - `shuffle_channels`, shuffle channels when computing stabilities
 
-See `experiments_ICLR23.md` for examples on how to run the code.
+See `experiments.md` for examples on how to run the code.
