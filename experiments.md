@@ -2,11 +2,12 @@
 
 Experiments are run using [`grid`](https://github.com/mariogeiger/grid/tree/master/grid).
 
-The [`diffeo-sota`](https://anonymous.4open.science/r/diffeo-sota-C02B/README.md) repository implements the training of deep neural networks.
-The [`relativestability`](https://anonymous.4open.science/r/relativestability-D5DF/README.md) repository implements the diffeomorphisms (D_f), noise (G_f) and relative (R_f) stabilities computation. 
-Experiments of Section 4 are run using [`scale_detection_1d`](https://anonymous.4open.science/r/scale_detection_1d-553D/README.md). 
+The [`diffeo-sota`](https://github.com/leonardopetrini/diffeo-sota) repository implements the training of deep neural networks.
 
-An PyTorch implementation of the [`scale-detection task` in 2D can be found here](https://anonymous.4open.science/r/diffeo-sota-C02B/datasets/twopoints.py).
+The [`relativestability`](https://github.com/leonardopetrini/relativestability) repository implements the diffeomorphisms (D_f), noise (G_f) and relative (R_f) stabilities computation. 
+Experiments of Section 4 are run using [`scale_detection_1d`](https://github.com/UmbertoTomasini/scale_detection_1d). 
+
+An PyTorch implementation of the [`scale-detection task` in 2D can be found here](https://github.com/leonardopetrini/diffeo-sota/blob/main/datasets/twopoints.py).
 
 ### Figures 1, 10
 Networks trained on CIFAR10 at different added noise intensities:
